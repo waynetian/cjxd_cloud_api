@@ -1,0 +1,108 @@
+[01/May/2015 13:45:20]"post / HTTP/1.1" 405 41
+[01/May/2015 13:45:31]"post / HTTP/1.1" 405 41
+[01/May/2015 13:47:12]"post / HTTP/1.1" 405 41
+[01/May/2015 13:47:56]"post / HTTP/1.1" 405 41
+[01/May/2015 13:49:13]"post / HTTP/1.1" 405 41
+[01/May/2015 13:49:29]"GET /user/ HTTP/1.1" 200 11464
+[01/May/2015 13:49:29]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[01/May/2015 13:49:29]"GET /favicon.ico HTTP/1.1" 404 3952
+[01/May/2015 13:49:59]"post / HTTP/1.1" 405 41
+[01/May/2015 13:51:11]"POST / HTTP/1.1" 405 41
+[01/May/2015 13:51:19]"POST / HTTP/1.1" 405 41
+[01/May/2015 13:52:31]"POST / HTTP/1.1" 405 41
+[01/May/2015 13:53:25]"POST localhost:8001/user/ HTTP/1.1" 404 1659
+[01/May/2015 13:53:42]"GET /user/ HTTP/1.1" 200 11464
+[01/May/2015 13:53:42]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:42]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /user/ HTTP/1.1" 200 11464
+[01/May/2015 13:53:44]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:44]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /user/ HTTP/1.1" 200 11464
+[01/May/2015 13:53:45]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 13:53:45]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /user/ HTTP/1.1" 200 11464
+[01/May/2015 13:54:15]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 13:54:15]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[01/May/2015 13:54:22]"POST /user/ HTTP/1.1" 415 62
+[01/May/2015 13:56:45]"POST /user/ HTTP/1.1" 201 11165
+[01/May/2015 13:57:45]"GET /user/ HTTP/1.1" 200 11643
+[01/May/2015 13:57:45]"GET /static/rest_framework/img/grid.png HTTP/1.1" 304 0
+[01/May/2015 14:01:32]"post /user HTTP/1.1" 500 62964
+[01/May/2015 14:04:01]"post /user HTTP/1.1" 500 62964
+[01/May/2015 14:04:39]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:06:13]"POST /user/ HTTP/1.1" 415 62
+[01/May/2015 14:07:25]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:08:57]"POST /user/ HTTP/1.1" 415 62
+[01/May/2015 14:09:56]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:11:40]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:11:52]"POST /user/ HTTP/1.1" 415 62
+[01/May/2015 14:13:34]"POST /user/ HTTP/1.1" 415 62
+[01/May/2015 14:14:06]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:15:02]"POST /user/ HTTP/1.1" 201 57
+[01/May/2015 14:15:29]"GET /user/ HTTP/1.1" 200 11832
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 01, 2015 - 12:47:13
+Django version 1.8, using settings 'api.settings'
+Starting development server at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
+[01/May/2015 14:17:15]"GET /user/ HTTP/1.1" 200 11946
+[01/May/2015 14:17:35]"POST /user/ HTTP/1.1" 201 66
+[01/May/2015 14:17:45]"GET /user/ HTTP/1.1" 200 12165
+[01/May/2015 14:17:45]"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/js/jquery-1.8.1-min.js HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[01/May/2015 14:17:45]"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 01, 2015 - 14:17:09
+Django version 1.8, using settings 'api.settings'
+Starting development server at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
+[01/May/2015 14:33:13]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:33:33]"post /user/ HTTP/1.1" 400 43
+[01/May/2015 14:33:42]"post /user/ HTTP/1.1" 201 61
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 01, 2015 - 14:30:19
+Django version 1.8, using settings 'api.settings'
+Starting development server at http://0.0.0.0:8001/
+Quit the server with CONTROL-C.
