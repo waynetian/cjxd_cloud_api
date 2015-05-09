@@ -72,8 +72,8 @@ class UserInfoView(APIView):
         except ObjectDoesNotExist:
             raise Http404
     
-
-
+    def post(self, request, *args, **kwargs):
+        pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -87,7 +87,7 @@ class UserViewSet(viewsets.ModelViewSet):
         # random generate uuid, max length 30 char
         import uuid
         #username = str(uuid.uuid4())[:-2])
-        username = str(uuid.uuid4())[:-2]
+        username = str(uuid.uuid4())[:-6]
         print 'username length is', len(username)
         email = data['email']
         password = data['password']
@@ -140,6 +140,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 class OrganizationInfoViewSet(viewsets.ModelViewSet):
     queryset = OrganizationInfo.objects.all()
     serializer_class = OrganizationInfoSerializer
+
+
+
     '''
     def list(self, request, *args, **kwargs):
         print '***************************'

@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserBaseInfoSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    #user = UserSerializer()
 
     class Meta:
         model = UserBaseInfo
@@ -35,8 +35,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class OrganizationInfoSerializer(serializers.ModelSerializer):
-    org = OrganizationSerializer()
-
     class Meta:
         model = OrganizationInfo
 

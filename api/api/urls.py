@@ -8,6 +8,9 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 #router.register(r'user_profile', views.UserProfileViewSet)
 router.register(r'user', views.UserViewSet)
+router.register(r'user_base_info', views.UserBaseInfoViewSet)
+
+
 router.register(r'organization', views.OrganizationViewSet)
 router.register(r'organization_info', views.OrganizationInfoViewSet)
 

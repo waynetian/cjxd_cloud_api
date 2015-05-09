@@ -9,9 +9,10 @@ class UserBaseInfo(models.Model):
     user = models.OneToOneField(User)
     name = models.CharField(max_length=32, null=False)
     id_number = models.CharField(max_length=18, null=True)
-    #email = models.EmailField(max_length=64)
     email_act = models.BooleanField(default=False)
-
+    mobile_number = models.CharField(max_length=12, null=True, unique=True)
+    mobile_act = models.BooleanField(default=False)
+ 
     class Meta:
         db_table = 't_user_base_info'
 
@@ -22,7 +23,7 @@ class Organization(models.Model):
     name = models.CharField(max_length=128, null=False)
     short_name = models.CharField(max_length=64, null=False)
     type = models.PositiveSmallIntegerField(null=False)
-    parent_id = models.IntegerField(null=False)
+    parent_id = models.IntegerField(null=False, default=0)
     org_id_seq = models.CharField(max_length=512,null=True,default='/')
     display_index = models.PositiveSmallIntegerField(null=True, default=32767)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -40,6 +41,7 @@ class OrganizationInfo(models.Model):
     address = models.CharField(max_length=256)
     certificate_number = models.CharField(max_length=30)
     legal_person_id = models.CharField(max_length=18)
+    creator_id = models.IntegerField(null=True)
     business_type_code = models.CharField(max_length=5)
     business_tag = models.CharField(max_length=256)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -79,8 +81,6 @@ class UserProfile(models.Model):
     parent_id = models.IntegerField(default=0)
     org_id = models.IntegerField(default=0)
     display_index = models.PositiveSmallIntegerField(default=None)
-    mobile_number = models.CharField(max_length=12, null=False, unique=True)
-    mobile_act = models.BooleanField(default=False)
     status = models.PositiveSmallIntegerField(default=0)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
