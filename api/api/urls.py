@@ -27,10 +27,11 @@ urlpatterns = [
     # Examples:
     # url(r'^$', 'api.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    # url(r'^user_base_info/?<user_id>', views.UserInfoView.as_view()),
+
+
     url(r'^', include(router.urls)),
     url(r'^auth/', views.AuthView.as_view()),
-    url(r'^user_info/', views.UserInfoView.as_view()),
-
 
     #url(r'^password/', views.PasswordView.as_view()),
 

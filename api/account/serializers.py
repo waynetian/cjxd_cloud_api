@@ -25,7 +25,6 @@ class UserBaseInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserBaseInfo
-        fields = ('user', 'name', 'id_number', 'email_act') 
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:

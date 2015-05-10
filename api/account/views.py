@@ -120,6 +120,17 @@ class UserBaseInfoViewSet(viewsets.ModelViewSet):
     queryset = UserBaseInfo.objects.all()
     serializer_class = UserBaseInfoSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        user_id = kwargs['pk']
+        try:
+            base_info = UserBaseInfo.objects.get(user=user_id)
+            serializer = UserBaseInfoSerializer(base_info)
+            return Response(serializer.data)
+  
+        except ObjectDoesNotExist:
+            raise Http404
+ 
+
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
