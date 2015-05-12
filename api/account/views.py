@@ -57,6 +57,31 @@ class AuthView(APIView):
         #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class OrgSetView(APIView):
+    def get(self, request, *args, **kwargs):
+        q = request.query_params 
+        org_id = q['org_id']
+
+        org = Organization.objects.get(id=org_id)
+        result = [{b'text':org.name.encode('utf8'), b'org_id':org_id.encode('utf8'), b'nodes':[], b'name':'abc'}, ]
+        
+        self.RecursiveQuery(int(org_id), result[0]['nodes'])
+        print result
+        import json
+        data = json.dumps(result)
+        print data
+        from django.http import HttpResponse
+ 
+        return Response(data)
+
+    def RecursiveQuery(self, org_id, result):
+        res = Organization.objects.filter(parent_id=org_id)
+        for i in res:
+            item = {'text': i.name, 'org_id':i.id}
+            item['nodes'] = [] 
+            result.append(item) 
+            self.RecursiveQuery(i.id, item['nodes'])  
+
 
 
 class UserInfoView(APIView):
@@ -141,12 +166,20 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         org.name = data['name']
         org.short_name = data['short_name'] 
         org.type = data['type'] 
-        org.parent_id = data['parent_id'] 
+        org.parent_id = int(data['parent_id'])
         org.save()
-        org.org_id_seq += "%s/" %org.id
+        if org.parent_id != 0:
+            parent_id = org.parent_id
+            parent_org =  Organization.objects.get(id=parent_id)
+            org.org_id_seq = "%s%s/" %(parent_org.org_id_seq, org.id)
+        else:
+            org.org_id_seq += "/%s/" %(org.id)
         org.save()
         serializer = OrganizationSerializer(org)
         return Response(serializer.data)
+
+
+
 
 class OrganizationInfoViewSet(viewsets.ModelViewSet):
     queryset = OrganizationInfo.objects.all()

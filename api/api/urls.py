@@ -32,6 +32,8 @@ urlpatterns = [
 
     url(r'^', include(router.urls)),
     url(r'^auth/', views.AuthView.as_view()),
+    url(r'^orgset/', views.OrgSetView.as_view()),
+
 
     #url(r'^password/', views.PasswordView.as_view()),
 
