@@ -173,11 +173,33 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             parent_org =  Organization.objects.get(id=parent_id)
             org.org_id_seq = "%s%s/" %(parent_org.org_id_seq, org.id)
         else:
-            org.org_id_seq += "/%s/" %(org.id)
+            org.org_id_seq = "/%s/" %(org.id)
+            print org.org_id_seq
         org.save()
         serializer = OrganizationSerializer(org)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        org_id = int(kwargs['pk'])
+        
+        ret = self.RecursiveDestroy(org_id)
+        i = Organization.objects.get(id=org_id)
+        i.delete()
+
+        if ret == 0:
+            return Response('ok')
+ 
+        return Response('error')
+
+    def RecursiveDestroy(self, org_id):
+        ret = 0
+        res = Organization.objects.filter(parent_id=org_id)
+        for i in res:
+            # user exist check
+            print i.id
+            ret = self.RecursiveDestroy(i.id)
+            i.delete()
+        return ret
 
 
 
