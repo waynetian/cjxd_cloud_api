@@ -74,14 +74,14 @@ class Role(models.Model):
 class UserProfile(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, related_name='user_profile') 
-    org = models.ManyToManyField(Organization, related_name='user_org')
-    job_type = models.PositiveSmallIntegerField(default=0)
-    job_title = models.CharField(max_length=32, default=None)
+    #org = models.ManyToManyField(Organization, related_name='user_org')
+    #job_type = models.PositiveSmallIntegerField(default=0)
+    #job_title = models.CharField(max_length=32, default=None)
     #role = models.ManyToManyField(Role, related_name='user_role', null=False)
     parent_id = models.IntegerField(default=0)
     org_id = models.IntegerField(default=0)
-    display_index = models.PositiveSmallIntegerField(default=None)
-    status = models.PositiveSmallIntegerField(default=0)
+    #display_index = models.PositiveSmallIntegerField(default=None)
+    
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -97,6 +97,17 @@ class RoleToUser(models.Model):
 
     class Meta:
         db_table = 't_role_user'
+
+class OrganizationToUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User)
+    org =  models.ForeignKey(Organization)
+    job_type = models.PositiveSmallIntegerField(default=0)
+    job_title = models.CharField(max_length=32, default=None)
+    display_index = models.PositiveSmallIntegerField(null=True, default=32767)
+    status = models.PositiveSmallIntegerField(default=0)
+    class Meta:
+        db_table = 't_organization_user'
 
 
 

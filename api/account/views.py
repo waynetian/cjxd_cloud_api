@@ -61,7 +61,6 @@ class OrgSetView(APIView):
     def get(self, request, *args, **kwargs):
         q = request.query_params 
         org_id = q['org_id']
-
         org = Organization.objects.get(id=org_id)
         result = [{b'text':org.name.encode('utf8'), b'org_id':org_id.encode('utf8'), b'nodes':[], b'name':'abc'}, ]
         
@@ -69,9 +68,7 @@ class OrgSetView(APIView):
         print result
         import json
         data = json.dumps(result)
-        print data
         from django.http import HttpResponse
- 
         return Response(data)
 
     def RecursiveQuery(self, org_id, result):
@@ -82,6 +79,72 @@ class OrgSetView(APIView):
             result.append(item) 
             self.RecursiveQuery(i.id, item['nodes'])  
 
+class OrgUserSetView(APIView):
+    def get(self, request, *args, **kwargs):
+        q = request.query_params 
+        org_id = q['org_id']
+        
+        user_list = []
+        
+        self.RecursiveGet()
+        
+
+ 
+        return Response('**********')    
+
+    def RecursiveGet(self, org_id, user_list):
+        users = OrganizationToUser.objects.filter(org_id=org_id) 
+
+    def post(self, request, *args, **kwargs):
+        print '**********'
+        q = request.data
+        print q
+        user_name = q['user_name']
+        email = q['email']
+        mobile = q['mobile'] 
+        id_number = q['id_number']
+        org_id = q['org_id']
+        job_title = q['job_title']
+        job_type = q['job_type']
+        role_id = q['role_id'] 
+        
+        import uuid
+        uid = str(uuid.uuid4())[:-6]
+        password = 'cjxd123'
+        user = User.objects.create_user(uid, email, password)
+        
+        base_info = UserBaseInfo()
+        base_info.user = user
+        base_info.name = user_name 
+        base_info.id_number = id_number 
+        base_info.save()
+
+        user_profile = UserProfile()
+        user_profile.user = user
+        user_profile.org  = org_id
+        user_profile.save()
+       
+        role = Role.objects.get(role_id=role_id) 
+        org = Organization.objects.get(id=org_id)
+        role2user = RoleToUser()
+        role2user.role = role
+        role2user.user = user
+        role2user.org = org
+        role2user.save()
+
+        org2user = OrganizationToUser()
+        org2user.user_id = user.id
+        org2user.org_id = org_id
+        org2user.job_type = job_type
+        org2user.job_title = job_title
+        
+        org2user.save()
+
+        result = {'user_id':user.id, 'org_id':org_id}
+        import json
+        data = json.dumps(result)
+        from django.http import HttpResponse
+        return Response('***************')
 
 
 class UserInfoView(APIView):
