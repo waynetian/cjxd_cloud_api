@@ -5,10 +5,11 @@ from django.db import models
 
 # Create your models here.
 class UserBaseInfo(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User)
+    #id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, primary_key=True)
     name = models.CharField(max_length=32, null=False)
     id_number = models.CharField(max_length=18, null=True)
+    email = models.EmailField(max_length=128, null=False)
     email_act = models.BooleanField(default=False)
     mobile_number = models.CharField(max_length=12, null=True, unique=True)
     mobile_act = models.BooleanField(default=False)
@@ -71,37 +72,40 @@ class Role(models.Model):
     class Meta:
         db_table = 't_role'
 
-class UserProfile(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, related_name='user_profile') 
+#class UserProfile(models.Model):
+#    id = models.AutoField(primary_key=True)
+#    user = models.ForeignKey(User, related_name='user_profile') 
     #org = models.ManyToManyField(Organization, related_name='user_org')
     #job_type = models.PositiveSmallIntegerField(default=0)
     #job_title = models.CharField(max_length=32, default=None)
     #role = models.ManyToManyField(Role, related_name='user_role', null=False)
-    parent_id = models.IntegerField(default=0)
-    org_id = models.IntegerField(default=0)
+#    parent_id = models.IntegerField(default=0)
+#    org=models.ForeignKey(Organization,related_name='user_org_profile')
     #display_index = models.PositiveSmallIntegerField(default=None)
     
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+#    create_time = models.DateTimeField(auto_now_add=True)
+#    update_time = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        db_table = 't_user_profile'
+#    class Meta:
+#        db_table = 't_user_profile'
 
 
-class RoleToUser(models.Model):
-    id = models.AutoField(primary_key=True)
-    role = models.ForeignKey(Role)
-    user = models.ForeignKey(User)
-    org =  models.ForeignKey(Organization)
-
-    class Meta:
-        db_table = 't_role_user'
+#class RoleToUser(models.Model):
+#    id = models.AutoField(primary_key=True)
+#    role = models.ForeignKey(Role)
+#    user = models.ForeignKey(User)
+#    org =  models.ForeignKey(Organization)
+#
+#    class Meta:
+#        db_table = 't_role_user'
 
 class OrganizationToUser(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(UserBaseInfo)
     org =  models.ForeignKey(Organization)
+    role = models.ForeignKey(Role)
+    
+    parent_id = models.IntegerField(default=0)
     job_type = models.PositiveSmallIntegerField(default=0)
     job_title = models.CharField(max_length=32, default=None)
     display_index = models.PositiveSmallIntegerField(null=True, default=32767)

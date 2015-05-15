@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -84,21 +85,28 @@ class OrgUserSetView(APIView):
         q = request.query_params 
         org_id = q['org_id']
         
-        user_list = []
+        result_list = []
         
-        self.RecursiveGet()
-        
+        self.RecursiveGet(org_id, result_list)
+        serializer = OrgUserSerializer(result_list, many=True)   
+        return Response(serializer.data)
 
  
-        return Response('**********')    
 
-    def RecursiveGet(self, org_id, user_list):
-        users = OrganizationToUser.objects.filter(org_id=org_id) 
+    def RecursiveGet(self, org_id, result_list):
+        o2u_list=OrganizationToUser.objects.filter(org__parent_id=org_id) 
+        for i in o2u_list:
+           result_list.append({'base_info':i.user,\
+                                        'org':i.org, \
+                                        'role':i.role, \
+                                        'org2user':i})
+           self.RecursiveGet(i.org.id, result_list)
+ 
+             
 
     def post(self, request, *args, **kwargs):
-        print '**********'
         q = request.data
-        print q
+        
         user_name = q['user_name']
         email = q['email']
         mobile = q['mobile'] 
@@ -112,6 +120,8 @@ class OrgUserSetView(APIView):
         uid = str(uuid.uuid4())[:-6]
         password = 'cjxd123'
         user = User.objects.create_user(uid, email, password)
+        role = Role.objects.get(role_id=role_id) 
+        org = Organization.objects.get(id=org_id)
         
         base_info = UserBaseInfo()
         base_info.user = user
@@ -119,32 +129,30 @@ class OrgUserSetView(APIView):
         base_info.id_number = id_number 
         base_info.save()
 
-        user_profile = UserProfile()
-        user_profile.user = user
-        user_profile.org  = org_id
-        user_profile.save()
+        #user_profile = UserProfile()
+        #user_profile.user = user
+        #user_profile.org  = org
+        #user_profile.save()
        
-        role = Role.objects.get(role_id=role_id) 
-        org = Organization.objects.get(id=org_id)
-        role2user = RoleToUser()
-        role2user.role = role
-        role2user.user = user
-        role2user.org = org
-        role2user.save()
+        #role2user = RoleToUser()
+        #role2user.role = role
+        #role2user.user = user
+        #role2user.org = org
+        #role2user.save()
 
         org2user = OrganizationToUser()
-        org2user.user_id = user.id
-        org2user.org_id = org_id
+        org2user.user = base_info
+        org2user.org = org
+        org2user.role = role
         org2user.job_type = job_type
         org2user.job_title = job_title
-        
         org2user.save()
-
-        result = {'user_id':user.id, 'org_id':org_id}
-        import json
-        data = json.dumps(result)
-        from django.http import HttpResponse
-        return Response('***************')
+        
+        serializer = OrgUserSerializer({'base_info':base_info,\
+                                        'org':org, \
+                                        'role':role, \
+                                        'org2user':org2user})
+        return Response(serializer.data)
 
 
 class UserInfoView(APIView):
@@ -174,9 +182,7 @@ class UserViewSet(viewsets.ModelViewSet):
         
         # random generate uuid, max length 30 char
         import uuid
-        #username = str(uuid.uuid4())[:-2])
         username = str(uuid.uuid4())[:-6]
-        print 'username length is', len(username)
         email = data['email']
         password = data['password']
         try:
@@ -218,7 +224,23 @@ class UserBaseInfoViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             raise Http404
  
-
+    def create(self, request, *args, **kwargs):
+            data = request.data
+            user_id = data['user_id']
+            user = User.objects.get(id=user_id)
+            
+            base_info = UserBaseInfo()
+            base_info.user = user
+            base_info.email = data['email']
+            base_info.name = data['name']
+            base_info.id_number = data['id_number']
+            base_info.mobile_number = data['mobile_number']
+            base_info.save() 
+        
+            serializer = UserBaseInfoSerializer(base_info)
+            return Response(serializer.data)
+ 
+ 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
