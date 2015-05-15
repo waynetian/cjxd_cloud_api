@@ -79,7 +79,7 @@ class OrgUserSerializer(serializers.Serializer):
     base_info  = UserBaseInfoSerializer()
     org = OrganizationSerializer()
     role = RoleSerializer()
-    org2user = OrganizationToUser()
+    org2user = OrganizationToUserSerializer()
 
 
 

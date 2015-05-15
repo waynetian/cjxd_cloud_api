@@ -23,12 +23,22 @@ class AuthView(APIView):
 
         try:
             username = User.objects.get(email=email)
+            u = User.objects.get(username=username)
+            print u.pk 
         except ObjectDoesNotExist:
             raise Http404
     
         user = authenticate(username=username, password=password)
         if user is not None:
-            serializer = UserSerializer(user)
+            base_info = UserBaseInfo.objects.get(user_id=user.pk)
+            org2user = OrganizationToUser.objects.get(user=user.pk)
+            org = Organization.objects.get(id=org2user.org_id)
+            role = Role.objects.get(role_id=org2user.role_id)
+    
+            serializer = OrgUserSerializer({'base_info':base_info,\
+                                        'org':org, \
+                                        'role':role, \
+                                        'org2user':org2user})
             return Response(serializer.data)
         else:
             raise Http404
@@ -82,34 +92,45 @@ class OrgSetView(APIView):
 
 class OrgUserSetView(APIView):
     def get(self, request, *args, **kwargs):
+        print '***********'
         q = request.query_params 
         org_id = q['org_id']
         
         result_list = []
         
         self.RecursiveGet(org_id, result_list)
+        print result_list 
         serializer = OrgUserSerializer(result_list, many=True)   
         return Response(serializer.data)
 
  
 
     def RecursiveGet(self, org_id, result_list):
-        o2u_list=OrganizationToUser.objects.filter(org__parent_id=org_id) 
+        o2u_list=OrganizationToUser.objects.filter(org=org_id) 
+        for i in o2u_list:
+           result_list.append({'base_info':i.user,\
+                                        'org':i.org, \
+                                        'role':i.role, \
+                                        'org2user':i})
+ 
+
+
+        o2u_list=OrganizationToUser.objects.filter(org__parent_id=org_id ) 
+ 
         for i in o2u_list:
            result_list.append({'base_info':i.user,\
                                         'org':i.org, \
                                         'role':i.role, \
                                         'org2user':i})
            self.RecursiveGet(i.org.id, result_list)
- 
              
 
     def post(self, request, *args, **kwargs):
         q = request.data
-        
+        print 'q is', q 
         user_name = q['user_name']
         email = q['email']
-        mobile = q['mobile'] 
+        mobile_number = q['mobile_number'] 
         id_number = q['id_number']
         org_id = q['org_id']
         job_title = q['job_title']
@@ -127,6 +148,7 @@ class OrgUserSetView(APIView):
         base_info.user = user
         base_info.name = user_name 
         base_info.id_number = id_number 
+        base_info.mobile_number = mobile_number
         base_info.save()
 
         #user_profile = UserProfile()
@@ -285,6 +307,39 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             ret = self.RecursiveDestroy(i.id)
             i.delete()
         return ret
+
+
+
+class OrganizationToUserViewSet(viewsets.ModelViewSet):
+    queryset = OrganizationToUser.objects.all()
+    serializer_class = OrganizationToUserSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        user_id = data['user_id']
+        org_id = data['org_id']
+        role_id = data['role_id']
+        job_type = data['job_type']
+        job_title = data['job_title']
+        
+        base_info = UserBaseInfo.objects.get(user_id=user_id)
+        org = Organization.objects.get(id=org_id)
+        role = Role.objects.get(id=role_id)
+
+        org2user = OrganizationToUser()
+        org2user.user = base_info
+        org2user.org = org
+        org2user.role = role
+        org2user.job_type = job_type
+        org2user.job_title = job_title
+        org2user.save()
+ 
+        serializer = OrgUserSerializer({'base_info':base_info,\
+                                        'org':org, \
+                                        'role':role, \
+                                        'org2user':org2user})
+        return Response(serializer.data)
+
 
 
 

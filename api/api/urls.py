@@ -13,6 +13,8 @@ router.register(r'user_base_info', views.UserBaseInfoViewSet)
 
 router.register(r'organization', views.OrganizationViewSet)
 router.register(r'organization_info', views.OrganizationInfoViewSet)
+router.register(r'organization_user', views.OrganizationToUserViewSet)
+
 
 
 
