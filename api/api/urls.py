@@ -8,18 +8,19 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 #router.register(r'user_profile', views.UserProfileViewSet)
 router.register(r'user', views.UserViewSet)
-router.register(r'user_base_info', views.UserBaseInfoViewSet)
-
-
 router.register(r'organization', views.OrganizationViewSet)
 router.register(r'organization_info', views.OrganizationInfoViewSet)
-router.register(r'organization_user', views.OrganizationToUserViewSet)
+
+#router.register(r'user_base_info', views.UserBaseInfoViewSet)
+
+
+#router.register(r'organization', views.OrganizationViewSet)
+#router.register(r'organization_info', views.OrganizationInfoViewSet)
+#router.register(r'organization_user', views.OrganizationToUserViewSet)
 
 
 
 
-#router.register(r'department', views.DepartmentViewSet)
-#router.register(r'company', views.CompanyViewSet)
 
 
 
@@ -34,13 +35,12 @@ urlpatterns = [
 
     url(r'^', include(router.urls)),
     url(r'^auth/', views.AuthView.as_view()),
-    url(r'^orgset/', views.OrgSetView.as_view()),
-    url(r'^org_user/', views.OrgUserView.as_view()),
+    url(r'^orguser/', views.OrgUserView.as_view()),
 
 
 
     #url(r'^password/', views.PasswordView.as_view()),
 
 
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
 ]

@@ -29,11 +29,16 @@ class AuthView(APIView):
             raise Http404
     
         user = authenticate(username=username, password=password)
+        print user
         if user is not None:
             base_info = UserBaseInfo.objects.get(user_id=user.pk)
+            print base_info
             org2user = OrganizationToUser.objects.get(user=user.pk)
+            print org2user
             org = Organization.objects.get(id=org2user.org_id)
+            print org
             role = Role.objects.get(role_id=org2user.role_id)
+            print role
     
             serializer = OrgUserSerializer({'base_info':base_info,\
                                         'org':org, \
@@ -68,12 +73,12 @@ class AuthView(APIView):
         #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class OrgSetView(APIView):
+class OrganizationSetView(APIView):
     def get(self, request, *args, **kwargs):
         q = request.query_params 
         org_id = q['org_id']
         org = Organization.objects.get(id=org_id)
-        result = [{b'text':org.name.encode('utf8'), b'org_id':org_id.encode('utf8'), b'nodes':[], b'short_name': org.short_name, }, ]
+        result = [{'text':org.name, 'org_id':org_id, 'nodes':[], 'short_name': org.short_name, }, ]
         
         self.RecursiveQuery(int(org_id), result[0]['nodes'])
         import json
@@ -143,7 +148,8 @@ class OrgUserView(APIView):
         base_info.email = email
         base_info.name = user_name 
         base_info.id_number = id_number 
-        base_info.mobile_number = mobile_number
+        if mobile_number != '':
+            base_info.mobile_number = mobile_number
         base_info.save()
 
         org2user = OrganizationToUser()
@@ -258,6 +264,31 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     serializer_class = OrganizationSerializer
 
 
+    def list(self, request, *args, **kwargs):
+        q = request.query_params 
+        if len(q) == 0:
+            return super(OrganizationViewSet, self).list(request, *args, **kwargs)
+        else:
+            org_id = q['org_id']
+            org = Organization.objects.get(id=org_id)
+            result = [{'text':org.name, 'org_id':org_id, 'nodes':[], 'short_name': org.short_name, }, ]
+        
+            self.RecursiveQuery(int(org_id), result[0]['nodes'])
+            data = json.dumps(result)
+            from django.http import HttpResponse
+            return Response(data)
+
+    def RecursiveQuery(self, org_id, result):
+        res = Organization.objects.filter(parent_id=org_id)
+        for i in res:
+            item = {'text': i.name, \
+                  'org_id':i.id, \
+              'short_name':i.short_name}
+            item['nodes'] = [] 
+            result.append(item) 
+            self.RecursiveQuery(i.id, item['nodes'])  
+
+
     def update(self, request, *args, **kwargs):
         org_id = int(kwargs['pk'])
         
@@ -307,9 +338,6 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         ret = self.RecursiveDestroy(org_id)
         i = Organization.objects.get(id=org_id)
         i.delete()
-        #UserBaseInfo.objects.filter(org_id=org_id).delete()
-
-
 
         if ret == 0:
             return Response('ok')
