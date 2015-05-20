@@ -73,10 +73,9 @@ class OrgSetView(APIView):
         q = request.query_params 
         org_id = q['org_id']
         org = Organization.objects.get(id=org_id)
-        result = [{b'text':org.name.encode('utf8'), b'org_id':org_id.encode('utf8'), b'nodes':[], b'name':'abc'}, ]
+        result = [{b'text':org.name.encode('utf8'), b'org_id':org_id.encode('utf8'), b'nodes':[], b'short_name': org.short_name, }, ]
         
         self.RecursiveQuery(int(org_id), result[0]['nodes'])
-        print result
         import json
         data = json.dumps(result)
         from django.http import HttpResponse
@@ -85,49 +84,44 @@ class OrgSetView(APIView):
     def RecursiveQuery(self, org_id, result):
         res = Organization.objects.filter(parent_id=org_id)
         for i in res:
-            item = {'text': i.name, 'org_id':i.id}
+            item = {'text': i.name, \
+                  'org_id':i.id, \
+              'short_name':i.short_name}
             item['nodes'] = [] 
             result.append(item) 
             self.RecursiveQuery(i.id, item['nodes'])  
 
-class OrgUserSetView(APIView):
+class OrgUserView(APIView):
     def get(self, request, *args, **kwargs):
-        print '***********'
         q = request.query_params 
         org_id = q['org_id']
         
         result_list = []
         
-        self.RecursiveGet(org_id, result_list)
-        print result_list 
-        serializer = OrgUserSerializer(result_list, many=True)   
-        return Response(serializer.data)
-
- 
-
-    def RecursiveGet(self, org_id, result_list):
         o2u_list=OrganizationToUser.objects.filter(org=org_id) 
         for i in o2u_list:
            result_list.append({'base_info':i.user,\
-                                        'org':i.org, \
-                                        'role':i.role, \
-                                        'org2user':i})
- 
+                                     'org':i.org, \
+                                    'role':i.role, \
+                                'org2user':i})
 
+        self.RecursiveGet(org_id, result_list)
+        serializer = OrgUserSerializer(result_list, many=True)   
+        return Response(serializer.data)
 
+    def RecursiveGet(self, org_id, result_list):
         o2u_list=OrganizationToUser.objects.filter(org__parent_id=org_id ) 
  
         for i in o2u_list:
            result_list.append({'base_info':i.user,\
-                                        'org':i.org, \
-                                        'role':i.role, \
-                                        'org2user':i})
+                                     'org':i.org, \
+                                    'role':i.role, \
+                                 'org2user':i})
            self.RecursiveGet(i.org.id, result_list)
              
 
     def post(self, request, *args, **kwargs):
         q = request.data
-        print 'q is', q 
         user_name = q['user_name']
         email = q['email']
         mobile_number = q['mobile_number'] 
@@ -146,21 +140,11 @@ class OrgUserSetView(APIView):
         
         base_info = UserBaseInfo()
         base_info.user = user
+        base_info.email = email
         base_info.name = user_name 
         base_info.id_number = id_number 
         base_info.mobile_number = mobile_number
         base_info.save()
-
-        #user_profile = UserProfile()
-        #user_profile.user = user
-        #user_profile.org  = org
-        #user_profile.save()
-       
-        #role2user = RoleToUser()
-        #role2user.role = role
-        #role2user.user = user
-        #role2user.org = org
-        #role2user.save()
 
         org2user = OrganizationToUser()
         org2user.user = base_info
@@ -175,6 +159,29 @@ class OrgUserSetView(APIView):
                                         'role':role, \
                                         'org2user':org2user})
         return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        q = request.query_params 
+        user_id = int(q['user_id'])
+       
+        try: 
+            i = User.objects.get(id=user_id)
+            i.delete()
+            return Response('ok')
+        except:
+            return Response('error')
+
+    
+    def put(self, request, *args, **kwargs):
+        q = request.query_params 
+        user_id = int(q['user_id'])
+       
+        try: 
+            i = User.objects.get(id=user_id)
+            i.delete()
+            return Response('ok')
+        except:
+            return Response('error')
 
 
 class UserInfoView(APIView):
@@ -212,25 +219,8 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(user)
             return Response(serializer.data)
         except Exception, e:
-            return Response(str(e))    
-
-    #def partial_update(self, request, *args, **kwargs):
-    #    ''' '''
-
+            return Response(str(e), status=500)    
     
-    #def destroy(self, request, *args, **kwargs):
-    #    ''' delete a new user '''
-    #    data = request.data
-    #    print '*******************'
-    #    return Response("delete user")
-
-
-    #def list(self, request, *args, **kwargs):
-    #    ''' delete a new user '''
-    #    #data = request.data
-    #    print '*******************'
-    #    return Response("list user")
-
 
 class UserBaseInfoViewSet(viewsets.ModelViewSet):
     queryset = UserBaseInfo.objects.all()
@@ -267,6 +257,31 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
+
+    def update(self, request, *args, **kwargs):
+        org_id = int(kwargs['pk'])
+        
+        data = request.data
+        name = data['name'] 
+        short_name = data['short_name']
+        parent_id = data['parent_id']
+        try: 
+            org = Organization.objects.get(id=org_id)
+        except ObjectDoesNotExist:
+            raise Http404
+        org.name = name
+        org.short_name = short_name
+        new_parent_org = Organization.objects.get(id=parent_id)
+        old_parent_org = Organization.objects.get(id=org.parent_id)
+        org.org_id_seq = org.org_id_seq.replace(\
+                               old_parent_org.org_id_seq, \
+                               new_parent_org.org_id_seq)
+        org.parent_id = parent_id 
+        org.save()
+        return Response("ok")
+
+
+ 
     def create(self, request, *args, **kwargs):
         data = request.data
         org = Organization()
@@ -292,18 +307,22 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         ret = self.RecursiveDestroy(org_id)
         i = Organization.objects.get(id=org_id)
         i.delete()
+        #UserBaseInfo.objects.filter(org_id=org_id).delete()
+
+
 
         if ret == 0:
             return Response('ok')
- 
         return Response('error')
 
     def RecursiveDestroy(self, org_id):
         ret = 0
         res = Organization.objects.filter(parent_id=org_id)
+        #UserBaseInfo.objects.filter(org_id=org_id).delete()
+
+
         for i in res:
             # user exist check
-            print i.id
             ret = self.RecursiveDestroy(i.id)
             i.delete()
         return ret
@@ -349,33 +368,4 @@ class OrganizationInfoViewSet(viewsets.ModelViewSet):
 
 
 
-    '''
-    def list(self, request, *args, **kwargs):
-        print '***************************'
-        q = request.query_params 
-        org_id = q['org_id']
-        try:
-            base_info = OrganizationInfo.objects.get(org=org_id)
-            serializer = OrganizationInfoSerializer(base_info)
-            return Response(serializer.data)
-        except ObjectDoesNotExist:
-            raise Http404
- 
-    '''
-
-'''
-class OrganizationInfoView(APIView):
-    def get(self, request, *args, **kwargs):
-        q = request.query_params 
-        org_id = q['org_id']
-        try:
-            base_info = OrganizationInfo.objects.get(org=org_id)
-            serializer = OrganizationInfoSerializer(base_info)
-            return Response(serializer.data)
-        except ObjectDoesNotExist:
-            raise Http404
-    
-'''
-
-        
 

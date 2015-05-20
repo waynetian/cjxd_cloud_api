@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^auth/', views.AuthView.as_view()),
     url(r'^orgset/', views.OrgSetView.as_view()),
-    url(r'^org_user_set/', views.OrgUserSetView.as_view()),
+    url(r'^org_user/', views.OrgUserView.as_view()),
 
 
 

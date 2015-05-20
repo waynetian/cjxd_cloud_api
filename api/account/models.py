@@ -65,39 +65,12 @@ class OrganizationInfo(models.Model):
 
 
 class Role(models.Model):
-    id = models.AutoField(primary_key=True)
-    role_id = models.PositiveSmallIntegerField(default=0)
+    role_id = models.PositiveSmallIntegerField(primary_key=True)
     role_name = models.CharField(max_length=32)
  
     class Meta:
         db_table = 't_role'
 
-#class UserProfile(models.Model):
-#    id = models.AutoField(primary_key=True)
-#    user = models.ForeignKey(User, related_name='user_profile') 
-    #org = models.ManyToManyField(Organization, related_name='user_org')
-    #job_type = models.PositiveSmallIntegerField(default=0)
-    #job_title = models.CharField(max_length=32, default=None)
-    #role = models.ManyToManyField(Role, related_name='user_role', null=False)
-#    parent_id = models.IntegerField(default=0)
-#    org=models.ForeignKey(Organization,related_name='user_org_profile')
-    #display_index = models.PositiveSmallIntegerField(default=None)
-    
-#    create_time = models.DateTimeField(auto_now_add=True)
-#    update_time = models.DateTimeField(auto_now=True)
-
-#    class Meta:
-#        db_table = 't_user_profile'
-
-
-#class RoleToUser(models.Model):
-#    id = models.AutoField(primary_key=True)
-#    role = models.ForeignKey(Role)
-#    user = models.ForeignKey(User)
-#    org =  models.ForeignKey(Organization)
-#
-#    class Meta:
-#        db_table = 't_role_user'
 
 class OrganizationToUser(models.Model):
     id = models.AutoField(primary_key=True)
