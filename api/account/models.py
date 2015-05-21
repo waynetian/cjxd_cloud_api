@@ -13,6 +13,7 @@ class UserBaseInfo(models.Model):
     email_act = models.BooleanField(default=False)
     mobile_number = models.CharField(max_length=12, null=True, unique=True)
     mobile_act = models.BooleanField(default=False)
+    domain_id = models.IntegerField(null=False)
  
     class Meta:
         db_table = 't_user_base_info'

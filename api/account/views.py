@@ -32,13 +32,9 @@ class AuthView(APIView):
         print user
         if user is not None:
             base_info = UserBaseInfo.objects.get(user_id=user.pk)
-            print base_info
             org2user = OrganizationToUser.objects.get(user=user.pk)
-            print org2user
             org = Organization.objects.get(id=org2user.org_id)
-            print org
             role = Role.objects.get(role_id=org2user.role_id)
-            print role
     
             serializer = OrgUserSerializer({'base_info':base_info,\
                                         'org':org, \
@@ -61,48 +57,12 @@ class AuthView(APIView):
         return Response()
 
 
-        #    snippets = Snippet.objects.all()
-        #    serializer = SnippetSerializer(snippets, many=True)
-        #    return Response(serializer.data)
-
-        #def post(self, request, format=None):
-        #    serializer = SnippetSerializer(data=request.DATA)
-        #    if serializer.is_valid():
-        #        serializer.save()
-        #        return Response(serializer.data, status=status.HTTP_201_CREATED)
-        #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class OrganizationSetView(APIView):
-    def get(self, request, *args, **kwargs):
-        q = request.query_params 
-        org_id = q['org_id']
-        org = Organization.objects.get(id=org_id)
-        result = [{'text':org.name, 'org_id':org_id, 'nodes':[], 'short_name': org.short_name, }, ]
-        
-        self.RecursiveQuery(int(org_id), result[0]['nodes'])
-        import json
-        data = json.dumps(result)
-        from django.http import HttpResponse
-        return Response(data)
-
-    def RecursiveQuery(self, org_id, result):
-        res = Organization.objects.filter(parent_id=org_id)
-        for i in res:
-            item = {'text': i.name, \
-                  'org_id':i.id, \
-              'short_name':i.short_name}
-            item['nodes'] = [] 
-            result.append(item) 
-            self.RecursiveQuery(i.id, item['nodes'])  
-
 class OrgUserView(APIView):
     def get(self, request, *args, **kwargs):
         q = request.query_params 
-        org_id = q['org_id']
+        org_id = int(q['org_id'])
         
         result_list = []
-        
         o2u_list=OrganizationToUser.objects.filter(org=org_id) 
         for i in o2u_list:
            result_list.append({'base_info':i.user,\
@@ -115,14 +75,15 @@ class OrgUserView(APIView):
         return Response(serializer.data)
 
     def RecursiveGet(self, org_id, result_list):
-        o2u_list=OrganizationToUser.objects.filter(org__parent_id=org_id ) 
- 
-        for i in o2u_list:
-           result_list.append({'base_info':i.user,\
-                                     'org':i.org, \
-                                    'role':i.role, \
-                                 'org2user':i})
-           self.RecursiveGet(i.org.id, result_list)
+        org_list = Organization.objects.filter(parent_id=org_id ) 
+        for i in org_list:
+            o2u_list=OrganizationToUser.objects.filter(org=i.id)
+            for ii in o2u_list: 
+                result_list.append({'base_info':ii.user,\
+                                          'org':ii.org, \
+                                         'role':ii.role, \
+                                     'org2user':ii})
+            self.RecursiveGet(i.id, result_list)
              
 
     def post(self, request, *args, **kwargs):
@@ -131,10 +92,13 @@ class OrgUserView(APIView):
         email = q['email']
         mobile_number = q['mobile_number'] 
         id_number = q['id_number']
-        org_id = q['org_id']
+        org_id = int(q['org_id'])
         job_title = q['job_title']
-        job_type = q['job_type']
-        role_id = q['role_id'] 
+        job_type = int(q['job_type'])
+        role_id = int(q['role_id'])
+        domain_id = int(q['domain_id'])
+
+
         user_id = None
         try:
             user_id = q['user_id']
@@ -157,6 +121,7 @@ class OrgUserView(APIView):
         base_info.email = email
         base_info.name = user_name 
         base_info.id_number = id_number 
+        base_info.domain_id = domain_id
         if mobile_number != '':
             base_info.mobile_number = mobile_number
         base_info.save()
@@ -193,6 +158,7 @@ class OrgUserView(APIView):
         mobile_number = q['mobile_number'] 
         id_number = q['id_number']
         org_id = int(q['org_id'])
+        old_org_id = int(q['old_org_id'])
         job_title = q['job_title']
         job_type = q['job_type']
         role_id = int(q['role_id'])
@@ -211,8 +177,12 @@ class OrgUserView(APIView):
         if mobile_number != '':
             base_info.mobile_number = mobile_number
         base_info.save()
-        
-        org2user = OrganizationToUser.objects.get(user_id=user_id, org_id=org_id ) 
+     
+        org2user = None 
+        if org_id == old_org_id:  
+            org2user = OrganizationToUser.objects.get(user_id=user_id, org_id=org_id ) 
+        else:
+            org2user = OrganizationToUser.objects.get(user_id=user_id, org_id=old_org_id ) 
         org2user.org = org
         org2user.role = role
         org2user.job_type = job_type
