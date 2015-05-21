@@ -135,11 +135,20 @@ class OrgUserView(APIView):
         job_title = q['job_title']
         job_type = q['job_type']
         role_id = q['role_id'] 
-        
-        import uuid
-        uid = str(uuid.uuid4())[:-6]
-        password = 'cjxd123'
-        user = User.objects.create_user(uid, email, password)
+        user_id = None
+        try:
+            user_id = q['user_id']
+        except KeyError:
+            pass
+        user = None 
+
+        if user_id is not None: 
+            user = User.objects.get(id=user_id)
+        else:
+            import uuid
+            uid = str(uuid.uuid4())[:-6]
+            password = 'cjxd123'
+            user = User.objects.create_user(uid, email, password)
         role = Role.objects.get(role_id=role_id) 
         org = Organization.objects.get(id=org_id)
         
@@ -167,27 +176,55 @@ class OrgUserView(APIView):
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        q = request.query_params 
-        user_id = int(q['user_id'])
-       
+        pk = int(request.path.split('/')[2])
         try: 
-            i = User.objects.get(id=user_id)
+            i = User.objects.get(id=pk)
             i.delete()
             return Response('ok')
-        except:
+        except Exception:
             return Response('error')
 
     
     def put(self, request, *args, **kwargs):
-        q = request.query_params 
-        user_id = int(q['user_id'])
-       
-        try: 
-            i = User.objects.get(id=user_id)
-            i.delete()
-            return Response('ok')
-        except:
-            return Response('error')
+        pk = int(request.path.split('/')[2])
+        q = request.data
+        user_name = q['user_name']
+        email = q['email']
+        mobile_number = q['mobile_number'] 
+        id_number = q['id_number']
+        org_id = int(q['org_id'])
+        job_title = q['job_title']
+        job_type = q['job_type']
+        role_id = int(q['role_id'])
+      
+        user_id = pk 
+
+        user = User.objects.get(id=user_id)
+        role = Role.objects.get(role_id=role_id) 
+        org = Organization.objects.get(id=org_id)
+        
+        base_info = UserBaseInfo.objects.get(user_id=user_id)
+        base_info.user = user
+        base_info.email = email
+        base_info.name = user_name 
+        base_info.id_number = id_number 
+        if mobile_number != '':
+            base_info.mobile_number = mobile_number
+        base_info.save()
+        
+        org2user = OrganizationToUser.objects.get(user_id=user_id, org_id=org_id ) 
+        org2user.org = org
+        org2user.role = role
+        org2user.job_type = job_type
+        org2user.job_title = job_title
+        org2user.save()
+        
+        serializer = OrgUserSerializer({'base_info':base_info,\
+                                        'org':org, \
+                                        'role':role, \
+                                        'org2user':org2user})
+        return Response(serializer.data)
+
 
 
 class UserInfoView(APIView):
