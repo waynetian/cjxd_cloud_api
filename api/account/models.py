@@ -13,7 +13,6 @@ class UserBaseInfo(models.Model):
     email_act = models.BooleanField(default=False)
     mobile_number = models.CharField(max_length=12, null=True, unique=True)
     mobile_act = models.BooleanField(default=False)
-    domain_id = models.IntegerField(null=False)
  
     class Meta:
         db_table = 't_user_base_info'
@@ -28,6 +27,8 @@ class Organization(models.Model):
     parent_id = models.IntegerField(null=False, default=0)
     org_id_seq = models.CharField(max_length=512,null=True,default='/')
     display_index = models.PositiveSmallIntegerField(null=True, default=32767)
+    domain_id = models.IntegerField(null=False)
+
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -52,18 +53,6 @@ class OrganizationInfo(models.Model):
     class Meta:
         db_table = 't_organization_info'
 
-#class UserToOrganization(models.Model):
-#    id = models.AutoField(primary_key=True)
-#    user = models.ForeignKeyField(User)
-#    org = models.ForeignKey(Organization)
-#    relation = models.PositiveSmallIntegerField(default=0)
-#    job_title = models.CharField(max_length=32)
-#    create_time = models.DateTimeField(auto_now_add=True)
-#    update_time = models.DateTimeField(auto_now=True)
-#
-#    class Meta:
-#        db_table = 't_user_to_org'
-
 
 class Role(models.Model):
     role_id = models.PositiveSmallIntegerField(primary_key=True)
@@ -84,6 +73,7 @@ class OrganizationToUser(models.Model):
     job_title = models.CharField(max_length=32, default=None)
     display_index = models.PositiveSmallIntegerField(null=True, default=32767)
     status = models.PositiveSmallIntegerField(default=0)
+
     class Meta:
         db_table = 't_organization_user'
 
