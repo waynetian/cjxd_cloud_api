@@ -57,9 +57,8 @@ class AuthView(APIView):
         return Response()
 
 
+ 
 class MultiOrgUserView(APIView):
-
-
 
     def post(self, request, *args, **kwargs):
         try:
@@ -151,8 +150,51 @@ class MultiOrgUserView(APIView):
 
 
 class OrgUserView(APIView):
+    def scope_query(self, request):
+        q = request.query_params 
+        org_id = int(q['org_id'])
+        print org_id
+        parent_org_list = []
+        org = Organization.objects.get(id=org_id)
+        parent_id_list = org.org_id_seq.split('/')
+        for i in  parent_id_list:
+            if i=="":
+                continue
+            ii = Organization.objects.get(id=i)
+            parent_org_list.append({'name':ii.short_name, 'id':ii.id})
+        #parent_org_list.append({'name':org.short_name, 'id':org.id})
+            
+        print 'aaa'
+ 
+        result = []
+
+
+        org_list = Organization.objects.filter(parent_id=org_id)
+        for i in org_list: 
+            result.append( {'text':i.short_name, 'org_id':i.id, 'org_id_seq': i.org_id_seq,  'icon':'glyphicon glyphicon-folder-close green', 'node_type':'org'})
+        
+        o2u_list=OrganizationToUser.objects.filter(org__id=org_id)
+        
+        for i in o2u_list:
+
+            mobile = {'text': i.user.mobile_number,  'icon': "glyphicon glyphicon-earphone",'node_type':'mobile'}
+            email =  {'text': i.user.email,  'icon': "glyphicon glyphicon-envelope", 'node_type':'email', }
+            node = [mobile, email]
+            job_title = i.job_title
+            result.append({'text':i.user.name, 'nodes':node,'icon': "glyphicon glyphicon-user blue", 'node_type':'user', 'tags':[job_title] })
+
+        rsp = {'parent_org_list':parent_org_list, 'result':result} 
+        data = json.dumps(rsp)
+        from django.http import HttpResponse
+        return Response(data)
+
+
+
     def get(self, request, *args, **kwargs):
         q = request.query_params 
+        if 'scope' in q:
+            return self.scope_query(request)
+
         org_id = int(q['org_id'])
         page_num = int(q['page_num'])
         num_per_page = 15 

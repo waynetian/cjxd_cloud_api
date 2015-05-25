@@ -11,9 +11,12 @@ class UserBaseInfo(models.Model):
     id_number = models.CharField(max_length=18, null=True)
     email = models.EmailField(max_length=128, null=False)
     email_act = models.BooleanField(default=False)
+
     mobile_number = models.CharField(max_length=12, null=True, unique=True)
     mobile_act = models.BooleanField(default=False)
- 
+    gender = models.IntegerField(null=True, default=0)
+
+
     class Meta:
         db_table = 't_user_base_info'
 
